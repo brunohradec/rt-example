@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { EmployeeSelectors, EmployeeThunks } from "../../redux/employees";
 import Pagination from "../../ui/pagination/Pagination";
+import { NavLink } from "react-router";
 
 export default function EmployeePage() {
     const [pageIndex, setPageIndex] = useState(0);
@@ -9,7 +10,8 @@ export default function EmployeePage() {
 
     const dispatch = useAppDispatch();
 
-    const employeeResult = useAppSelector(EmployeeSelectors.selectResult);
+    const employeesResult = useAppSelector(EmployeeSelectors.selectResult);
+    const employeesLoading = useAppSelector(EmployeeSelectors.selectLoading);
 
     useEffect(() => {
         dispatch(
@@ -24,7 +26,11 @@ export default function EmployeePage() {
 
     return (
         <>
+            <NavLink to="/">Back</NavLink>
+
             <h1>Employees</h1>
+
+            {employeesLoading && <span>Loading...</span>}
 
             <table>
                 <thead>
@@ -35,7 +41,7 @@ export default function EmployeePage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {employeeResult?.content.map((employee) => (
+                    {employeesResult?.content.map((employee) => (
                         <tr key={employee.id}>
                             <td>{employee.firstName}</td>
                             <td>{employee.lastName}</td>
@@ -45,7 +51,7 @@ export default function EmployeePage() {
                 </tbody>
             </table>
 
-            <Pagination pageIndex={pageIndex} totalPages={employeeResult?.totalPages} updatePageIndex={setPageIndex} />
+            <Pagination pageIndex={pageIndex} totalPages={employeesResult?.totalPages} updatePageIndex={setPageIndex} />
         </>
     );
 }

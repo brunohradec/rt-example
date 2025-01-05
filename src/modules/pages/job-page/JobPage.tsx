@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { JobSelectors, JobThunks } from "../../redux/jobs";
 import Pagination from "../../ui/pagination/Pagination";
+import { NavLink } from "react-router";
 
 export default function JobPage() {
     const [pageIndex, setPageIndex] = useState(0);
@@ -9,7 +10,8 @@ export default function JobPage() {
 
     const dispatch = useAppDispatch();
 
-    const jobResult = useAppSelector(JobSelectors.selectResult);
+    const jobsResult = useAppSelector(JobSelectors.selectResult);
+    const jobsLoading = useAppSelector(JobSelectors.selectLoading);
 
     useEffect(() => {
         dispatch(
@@ -25,7 +27,11 @@ export default function JobPage() {
 
     return (
         <>
+            <NavLink to="/">Back</NavLink>
+
             <h1>Available jobs</h1>
+
+            {jobsLoading && <span>Loading...</span>}
 
             <table>
                 <thead>
@@ -35,7 +41,7 @@ export default function JobPage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {jobResult?.content.map((job) => (
+                    {jobsResult?.content.map((job) => (
                         <tr key={job.id}>
                             <td>{job.name}</td>
                             <td>{job.description}</td>
@@ -44,7 +50,7 @@ export default function JobPage() {
                 </tbody>
             </table>
 
-            <Pagination pageIndex={pageIndex} totalPages={jobResult?.totalPages} updatePageIndex={setPageIndex} />
+            <Pagination pageIndex={pageIndex} totalPages={jobsResult?.totalPages} updatePageIndex={setPageIndex} />
         </>
     );
 }
